@@ -12,6 +12,7 @@ Then it will present the data which would be the time, and the temperature for t
 will also be exeptions to prevent crashes and it will have an executable. Will be on a loop so users can keep
 requesting. I'll be uploading this on Git Hub as a repository and will be updating it till its done!
 '''
+# First lets create the GUI elements
 # Creating the window
 root = Tk()  # Creates a top level window/root window which serves as the main window of the application
 frm = ttk.Frame(root, padding =10)   # Creats a frame widget which the label and buttion will use
