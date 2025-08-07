@@ -19,7 +19,7 @@ frm.grid()   # So we can have our elements be displayed in our window
 root.geometry ("430x80")    # Dimensions of the window
 root.title("Check My Weather")    # Title of the program
 
-# Creating objects which would be used to add colours to the text
+# Creating an object which will be used to add colours to the text
 style = ttk.Style()
 style.configure("Blue.TLabel", foreground ="blue")     # To add blue for labels
 style.configure("Red.TLabel", foreground ="red")    # To add red for labels
