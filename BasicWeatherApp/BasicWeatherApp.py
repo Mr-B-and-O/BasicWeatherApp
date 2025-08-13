@@ -12,16 +12,33 @@ statement). (I wonder how these inputs will interact with the API requests).They
 will send requests to the server and retrieve data through the requests API.Then it will present the data which
 would be the time, and the temperature for that city. Of course there will also be exeptions to prevent crashes
 and it will have an executable. Will be on a loop so users can keep requesting. I'll be uploading this on Git Hub
-as a repository and will be updating it till its done!
+as a repository and will be updating it till its done! - EMPR
+'''
+
+'''
+ Dev Note 1: Alright, to have it so that when a user is prompted to write something in the program, like the what
+city they are in, I want the text to be in a small frame and not plainly on the screen. It will make
+it alot more "professional" and it's pretty much standard. So I'll have to change the grids into packs! - EMPR
 '''
 
 # First lets create the GUI elements
 # Creating the window
 root = Tk()  # Creates a top level window/root window which serves as the main window of the application
 frm = ttk.Frame(root, padding =10)   # Creats a frame widget which the label and buttion will use
-frm.grid()   # So we can have our elements be displayed in our window
+frm.pack()   # So we can have our elements be displayed in our window
 root.geometry ("1290x720")    # Dimensions of the window
 root.title("Check My Weather")    # Title of the program
+
+# Creating functions and variables that will be needed for user inputs
+def process_input():    # This will be called inside our button method
+    user_input = entry_var.get()
+    result_label.config(text=f"You entered: {user_input}")
+
+entry_var = StringVar()
+entry_widget = ttk.Entry(root, textvariable=entry_var, width=40)
+result_label = Label(root, text="")
+result_label.pack(pady=10)
+
 
 # Creating an object which will be used to add colours, and fonts to the text
 style = ttk.Style()    # Style object for texts
@@ -30,12 +47,21 @@ style.configure("Blue.TLabel", foreground ="blue")     # To add blue for labels
 style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
 
+# Using the request API to make a request (incomplete)
+response = requests.get("https://www.youtube.com/data")
+
 # Creating the text and button
-greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel").grid(column =5,row =2) # Creates a label widget holding a static text string greeting the user
-temperature = ttk.Label(frm, text = "Temperature is ", style ="Red.TLabel").grid(column =6,row =8)     # Displaying the temperature
-time = ttk.Label(frm, text = "Time is ", style ="Purple.TLabel").grid(column =5,row =8)    # Displaying the time    
-ttk.Button(frm, text = "Exit", command=root.destroy).grid(column =8, row =0)    # A button widget is then created. When pressed, it will call the destroy() method on the root
-                                    
+greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting the user
+greetings.pack()
+temperature = ttk.Label(frm, text = "Temperature is ", style ="Red.TLabel")    # Displaying the temperature
+temperature.pack()
+time = ttk.Label(frm, text = "Time is ", style ="Purple.TLabel")    # Displaying the time    
+time.pack()
+botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)
+botton_1.pack(pady=10)
+botton_2 = ttk.Button(frm, text = "Exit", command=root.destroy)    # A button widget is then created. When pressed, it will call the destroy() method on the root
+botton_2.pack()
+
 # Keeps the program running
 root.mainloop()   # Method puts everything on the display, and responds to user input until the program terminates.
 
