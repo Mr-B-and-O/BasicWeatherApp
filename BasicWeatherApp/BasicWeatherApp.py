@@ -21,6 +21,14 @@ city they are in, I want the text to be in a small frame and not plainly on the 
 it alot more "professional" and it's pretty much standard. So I'll have to change the grids into packs! - EMPR
 '''
 
+'''
+ Dev Note 2: Welp I've added input and a simple HTTP requets as a test. From here it's now about actually getting data
+the user types in using the requests funtions. After that, it will be getting the time and weather then after that, it's
+creating loops so those text appear after certain actions have been done. I'll still have to figure out how to have everything
+look neat but I'll worry about that after I get all the necessary code to the the tasks. This has been interesting so far in all
+honesty and I'm proud of how I'm growing as a programmer! - EMPR
+'''
+
 # First lets create the GUI elements
 # Creating the window
 root = Tk()  # Creates a top level window/root window which serves as the main window of the application
@@ -32,12 +40,13 @@ root.title("Check My Weather")    # Title of the program
 # Creating functions and variables that will be needed for user inputs
 def process_input():    # This will be called inside our button method
     user_input = entry_var.get()
-    result_label.config(text=f"You entered: {user_input}")
+    result_label.config(text=f"You entered: {user_input}")    # Telling user what they typed
 
-entry_var = StringVar()
+# Our small window which text is going to be typed in
+entry_var = StringVar() # Managing value of label widget to have our text
 entry_widget = ttk.Entry(root, textvariable=entry_var, width=40)
-result_label = Label(root, text="")
-result_label.pack(pady=10)
+entry_widget.pack(pady=10)
+
 
 
 # Creating an object which will be used to add colours, and fonts to the text
@@ -48,7 +57,10 @@ style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
 
 # Using the request API to make a request (incomplete)
-response = requests.get("https://www.youtube.com/data")
+request = requests.get("https://github.com/Mr-B-and-O/BasicWeatherApp/blob/master/BasicWeatherApp/BasicWeatherApp.py")    # Send an HTTP GET request to a specified URL to retrieve data
+text_from_site = request.headers
+result_label = Label(root, text="")    # The lebal for our process_input fucntion
+result_label.pack(pady=10)
 
 # Creating the text and button
 greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting the user
@@ -57,10 +69,13 @@ temperature = ttk.Label(frm, text = "Temperature is ", style ="Red.TLabel")    #
 temperature.pack()
 time = ttk.Label(frm, text = "Time is ", style ="Purple.TLabel")    # Displaying the time    
 time.pack()
-botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)
+write_site_text = ttk.Label(root, text =f"{text_from_site}")    # Displaying the time    
+write_site_text.pack()
+botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)    # A button widget is created . When pressed, it types out the text which the user typed
 botton_1.pack(pady=10)
 botton_2 = ttk.Button(frm, text = "Exit", command=root.destroy)    # A button widget is then created. When pressed, it will call the destroy() method on the root
 botton_2.pack()
+
 
 # Keeps the program running
 root.mainloop()   # Method puts everything on the display, and responds to user input until the program terminates.
