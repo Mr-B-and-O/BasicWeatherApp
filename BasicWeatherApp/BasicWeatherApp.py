@@ -29,6 +29,24 @@ look neat but I'll worry about that after I get all the necessary code to the th
 honesty and I'm proud of how I'm growing as a programmer! - EMPR
 '''
 
+'''
+ Dev Note 3: I think ill be using the post method of requests to post data a site I want. Have whatever the user typed then
+have that in the post method but if I find something better, that would be great. And to get data from a site, I can have
+the URL then use the get method. Do i need to convert my data to Json? Is that a requirement so things work? To have the server respond
+and load the page then after I just use get method to get specific data from the site? Do I need timeouts if my requess gets stuck?
+Thats if it ever gets stuck. - EMPR
+'''
+
+'''
+ Dev Note 4: So I can't use requests on certain sites which is not certified with requests like weathersa so i'm planning to
+use a free weather API instead of requests. Should give me everyhting like location and time. Update: Okay you know what I think
+I may have accidently stumbled upon a solution, so turns out i was going in the right directions with requests and what not!
+I just needed to use it on a site that allows for it which is https://api.open-meteo.com/v1/forecast. So from what i learned
+it's time to implement the HTTP things. - EMPR
+'''
+
+# Get the url of open-meteo then send data to it. The input of the user 
+
 # First lets create the GUI elements
 # Creating the window
 root = Tk()  # Creates a top level window/root window which serves as the main window of the application
@@ -57,8 +75,9 @@ style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
 
 # Using the request API to make a request (incomplete)
-request = requests.get("https://github.com/Mr-B-and-O/BasicWeatherApp/blob/master/BasicWeatherApp/BasicWeatherApp.py")    # Send an HTTP GET request to a specified URL to retrieve data
-text_from_site = request.headers
+data = {"What" : "Huh"}
+request = requests.post("https://www.weathersa.co.za/post", json=data)    # Send an HTTP GET request to a specified URL to retrieve data
+text_from_site = request.text
 result_label = Label(root, text="")    # The lebal for our process_input fucntion
 result_label.pack(pady=10)
 
@@ -82,3 +101,48 @@ root.mainloop()   # Method puts everything on the display, and responds to user 
 
 # The program will loop
 
+# Ignore this part of the code. I may plan to use it so I'm keeping it here for now.
+
+'''
+# Is this the code I need to make my app work!? Did I stumble upon it by accident?! Remove longitude and latitude
+# This code has potential but i need to figure out whats wrong, for whatever reason when I put in other time zones, it's not working except America/New_York
+
+# Define the latitude and longitude for your desired location (e.g., New York City)
+latitude = 25.7617
+longitude = 1.1918
+
+# Define the API endpoint and parameters
+base_url = "https://api.open-meteo.com/v1/forecast"
+params = {
+    "latitude": latitude,
+    "longitude": longitude,
+    "hourly": "temperature_2m",  # Request hourly temperature at 2 meters
+    "forecast_days": 1,         # Get forecast for 1 day
+    "timezone": "America/New_York" # Specify the timezone
+}
+
+try:
+    # Make the API request
+    response = requests.get(base_url, params=params)
+    response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+
+    # Parse the JSON response
+    data = response.json()
+
+    # Extract and print the hourly temperatures
+    if "hourly" in data and "time" in data["hourly"] and "temperature_2m" in data["hourly"]:
+        times = data["hourly"]["time"]
+        temperatures = data["hourly"]["temperature_2m"]
+
+        print(f"Hourly temperatures for Latitude: {latitude}, Longitude: {longitude}")
+        for i in range(len(times)):
+            print(f"Time: {times[i]}, Temperature: {temperatures[i]}°C")
+    else:
+        print("Error: Could not retrieve hourly temperature data.")
+
+except requests.exceptions.RequestException as e:
+    print(f"Error making API request: {e}")
+except ValueError as e:
+    print(f"Error parsing JSON response: {e}")
+
+'''
