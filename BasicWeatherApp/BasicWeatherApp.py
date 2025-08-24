@@ -1,6 +1,10 @@
 import requests  # Our API for server requests
 from tkinter import * # Our GUI. This module allows us to create windows and change the properties of text
 from tkinter import ttk
+import json # We are going to parse the response data
+from datetime import datetime # Time for our locations
+
+# If you don't want to read any of my rambings just skip straight to the code xd
 
 '''
  So this program is going to be a basic weather program that will give the temperature and time for the city
@@ -44,6 +48,17 @@ I may have accidently stumbled upon a solution, so turns out i was going in the 
 I just needed to use it on a site that allows for it which is https://api.open-meteo.com/v1/forecast. So from what i learned
 it's time to implement the HTTP things. - EMPR
 '''
+
+'''
+ Dev Note 5: So I the open-meteo apir works and I tested the code on another module but the biggest issue it has is the fact that
+it can't calculate South African Weather and other common places because the site doesnt hold any data on it from the looks of it.
+And even when I did put weather places thats in the sites data, it wasnt showing it so I honestly don't know what the problem is.
+I have to ditch it and look for another weather site that allow python requests so I can get weather information. A free one of course.
+And....I found it and I'll integrate into the code. I have generated an API key and this program can only do a certain amount of requests
+from the site. And I will have to rewrite the code so that it works with the GUI that I have written. I'm pretty happy about this good step
+and breakthough! - EMPR
+'''
+
 
 # Get the url of open-meteo then send data to it. The input of the user 
 
@@ -101,48 +116,67 @@ root.mainloop()   # Method puts everything on the display, and responds to user 
 
 # The program will loop
 
-# Ignore this part of the code. I may plan to use it so I'm keeping it here for now.
+# This code below will be rewritten so that it's intergrated within this program
 
 '''
-# Is this the code I need to make my app work!? Did I stumble upon it by accident?! Remove longitude and latitude
-# This code has potential but i need to figure out whats wrong, for whatever reason when I put in other time zones, it's not working except America/New_York
+# The API key is [Redacted]
+# I have it! Now to intergrate this into my code!
 
-# Define the latitude and longitude for your desired location (e.g., New York City)
-latitude = 25.7617
-longitude = 1.1918
+API_KEY = "[Redacted]"
+CITY_NAME = "Phuthaditjhaba"  # Example city
 
-# Define the API endpoint and parameters
-base_url = "https://api.open-meteo.com/v1/forecast"
-params = {
-    "latitude": latitude,
-    "longitude": longitude,
-    "hourly": "temperature_2m",  # Request hourly temperature at 2 meters
-    "forecast_days": 1,         # Get forecast for 1 day
-    "timezone": "America/New_York" # Specify the timezone
-}
+# Base URL for the Current Weather Data API
+BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
+
+# Construct the complete URL for the API request
+complete_url = f"{BASE_URL}?q={CITY_NAME}&appid={API_KEY}"
 
 try:
-    # Make the API request
-    response = requests.get(base_url, params=params)
-    response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+    # Make the GET request to the OpenWeatherMap API
+    response = requests.get(complete_url)
+    response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
 
     # Parse the JSON response
-    data = response.json()
+    weather_data = response.json()
 
-    # Extract and print the hourly temperatures
-    if "hourly" in data and "time" in data["hourly"] and "temperature_2m" in data["hourly"]:
-        times = data["hourly"]["time"]
-        temperatures = data["hourly"]["temperature_2m"]
+    # Check if the API call was successful (e.g., city found)
+    if weather_data.get("cod") == 200:
+        # Extract relevant weather information
+        main_data = weather_data["main"]
+        current_temperature_kelvin = main_data["temp"]
+        current_pressure = main_data["pressure"]
+        current_humidity = main_data["humidity"]
 
-        print(f"Hourly temperatures for Latitude: {latitude}, Longitude: {longitude}")
-        for i in range(len(times)):
-            print(f"Time: {times[i]}, Temperature: {temperatures[i]}°C")
+        weather_description = weather_data["weather"][0]["description"]
+
+        # Extract and convert Unix timestamp (dt) to a readable datetime object
+        dt_unix = weather_data["dt"]
+        dt_object = datetime.fromtimestamp(dt_unix)
+
+        # Extract and convert sunrise/sunset Unix timestamps
+        sunrise_unix = weather_data["sys"]["sunrise"]
+        sunset_unix = weather_data["sys"]["sunset"]
+        sunrise_time = datetime.fromtimestamp(sunrise_unix)
+        sunset_time = datetime.fromtimestamp(sunset_unix)
+
+        # Print the extracted data
+        print(f"Weather in {CITY_NAME}:")
+        print(f"  Temperature: {current_temperature_kelvin:.2f} K")
+        print(f"  Pressure: {current_pressure} hPa")
+        print(f"  Humidity: {current_humidity}%")
+        print(f"  Description: {weather_description}")
+        print(f"  Data timestamp (UTC): {dt_object}")
+        print(f"  Sunrise time (Local): {sunrise_time}")
+        print(f"  Sunset time (Local): {sunset_time}")
+
     else:
-        print("Error: Could not retrieve hourly temperature data.")
+        print(f"Error: {weather_data.get('message', 'City not found or other API error.')}")
 
 except requests.exceptions.RequestException as e:
-    print(f"Error making API request: {e}")
-except ValueError as e:
-    print(f"Error parsing JSON response: {e}")
+    print(f"Request Error: {e}")
+except json.JSONDecodeError:
+    print("Error: Could not decode JSON response.")
+except KeyError as e:
+    print(f"Error: Missing key in API response - {e}")
 
 '''
