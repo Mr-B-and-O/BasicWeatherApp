@@ -59,6 +59,13 @@ from the site. And I will have to rewrite the code so that it works with the GUI
 and breakthough! - EMPR
 '''
 
+'''
+ Dev Note 6: Managed to integrate the request and API code succesfully which was rather quick and easy. This program has been upgraded so
+it doesn't only show you the time and temperature but also the pressure, humidity, weather description (tells you if its cloudy, if it's clear
+etc..), sunrise and sunset time, and a timestamp! So it's way better, whats left if having the user input the city then all the calculations and
+requests will start. From their I'll make everything look a little bit better then finally change this into an executable. Should have the windows
+and android version.
+'''
 
 # Get the url of open-meteo then send data to it. The input of the user 
 
@@ -80,56 +87,22 @@ entry_var = StringVar() # Managing value of label widget to have our text
 entry_widget = ttk.Entry(root, textvariable=entry_var, width=40)
 entry_widget.pack(pady=10)
 
-
-
 # Creating an object which will be used to add colours, and fonts to the text
 style = ttk.Style()    # Style object for texts
-style.configure(".", font=('Times New Roman', 30))    # Applies font and font size to all text. The lists of fonts: Arial, Times New Roman, Courier New, Verdana, Georgia, Tahoma, Comic Sans MS Impact
+style.configure(".", font=('Times New Roman', 20))    # Applies font and font size to all text. The lists of fonts: Arial, Times New Roman, Courier New, Verdana, Georgia, Tahoma, Comic Sans MS Impact
 style.configure("Blue.TLabel", foreground ="blue")     # To add blue for labels
 style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
 
-# Using the request API to make a request (incomplete)
-data = {"What" : "Huh"}
-request = requests.post("https://www.weathersa.co.za/post", json=data)    # Send an HTTP GET request to a specified URL to retrieve data
-text_from_site = request.text
-result_label = Label(root, text="")    # The lebal for our process_input fucntion
-result_label.pack(pady=10)
-
-# Creating the text and button
-greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting the user
-greetings.pack()
-temperature = ttk.Label(frm, text = "Temperature is ", style ="Red.TLabel")    # Displaying the temperature
-temperature.pack()
-time = ttk.Label(frm, text = "Time is ", style ="Purple.TLabel")    # Displaying the time    
-time.pack()
-write_site_text = ttk.Label(root, text =f"{text_from_site}")    # Displaying the time    
-write_site_text.pack()
-botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)    # A button widget is created . When pressed, it types out the text which the user typed
-botton_1.pack(pady=10)
-botton_2 = ttk.Button(frm, text = "Exit", command=root.destroy)    # A button widget is then created. When pressed, it will call the destroy() method on the root
-botton_2.pack()
-
-
-# Keeps the program running
-root.mainloop()   # Method puts everything on the display, and responds to user input until the program terminates.
-
-# The program will loop
-
-# This code below will be rewritten so that it's intergrated within this program
-
-'''
-# The API key is [Redacted]
-# I have it! Now to intergrate this into my code!
-
-API_KEY = "[Redacted]"
-CITY_NAME = "Phuthaditjhaba"  # Example city
+# Using the API key and the city name so the user can write what weather they want for the city
+API_KEY = "5d9f1926d563ad32d761e5ec29fcd47c"
+CITY_NAME = "Phuthaditjhaba"  # Example city. This will change that the user has to input it while the program is running then it will calculate everything after the input
 
 # Base URL for the Current Weather Data API
 BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 # Construct the complete URL for the API request
-complete_url = f"{BASE_URL}?q={CITY_NAME}&appid={API_KEY}"
+complete_url = f"{BASE_URL}?q={CITY_NAME}&units=metric&appid={API_KEY}"    # The words '&units=metric' changes the default temperature from Kelvin to Celsius
 
 try:
     # Make the GET request to the OpenWeatherMap API
@@ -143,7 +116,7 @@ try:
     if weather_data.get("cod") == 200:
         # Extract relevant weather information
         main_data = weather_data["main"]
-        current_temperature_kelvin = main_data["temp"]
+        current_temperature_celsius = main_data["temp"] 
         current_pressure = main_data["pressure"]
         current_humidity = main_data["humidity"]
 
@@ -161,7 +134,7 @@ try:
 
         # Print the extracted data
         print(f"Weather in {CITY_NAME}:")
-        print(f"  Temperature: {current_temperature_kelvin:.2f} K")
+        print(f"  Temperature: {current_temperature_celsius:.2f} C")
         print(f"  Pressure: {current_pressure} hPa")
         print(f"  Humidity: {current_humidity}%")
         print(f"  Description: {weather_description}")
@@ -179,4 +152,37 @@ except json.JSONDecodeError:
 except KeyError as e:
     print(f"Error: Missing key in API response - {e}")
 
-'''
+# Creating the text and button
+greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting the user
+greetings.pack()
+botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)    # A button widget is created . When pressed, it types out the text which the user typed
+botton_1.pack(pady=10)
+result_label = Label(root, text="")    # The lebal for our process_input fucntion
+result_label.pack(pady=10)
+
+# Creating text for the weather
+weather_city_name_text = ttk.Label(frm, text = f"Weather in {CITY_NAME}:", style ="Blue.TLabel")    # Display weather city name
+weather_city_name_text.pack(pady=10)
+temperature_text = ttk.Label(frm, text = f"  Temperature: {current_temperature_celsius:.2f} C", style ="Red.TLabel")    # Display temperature
+temperature_text.pack(pady=10)
+pressure_text = ttk.Label(frm, text = f"  Pressure: {current_pressure} hPa", style ="Purple.TLabel")    # Display pressure 
+pressure_text.pack(pady=10)
+humidity_text = ttk.Label(frm, text = f"  Humidity: {current_humidity}%", style ="Purple.TLabel")   # Display humidity
+humidity_text.pack(pady=10)
+description_text = ttk.Label(frm, text = f"  Description: {weather_description}", style ="Purple.TLabel")   # Display description
+description_text.pack(pady=10)
+data_timestamp_text = ttk.Label(frm, text = f"  Data timestamp (UTC): {dt_object}", style ="Purple.TLabel")    # Display timestamp
+data_timestamp_text.pack(pady=10)
+sunrise_time_text = ttk.Label(frm, text = f"  Sunrise time (Local): {sunrise_time}", style ="Purple.TLabel")    # Display sunrise time
+sunrise_time_text.pack(pady=10)
+sunset_time_text = ttk.Label(frm, text = f"  Sunset time (Local): {sunset_time}", style ="Purple.TLabel")    # Display sunset time
+sunset_time_text.pack(pady=10)
+
+# The exit button
+botton_2 = ttk.Button(frm, text = "Exit", command=root.destroy)    # A button widget is then created. When pressed, it will call the destroy() method on the root
+botton_2.pack(pady=10)
+
+# Keeps the program running
+root.mainloop()   # Method puts everything on the display, and responds to user input until the program terminates.
+
+# The program will loop
