@@ -82,6 +82,13 @@ def process_input():    # This will be called inside our button method
     user_input = entry_var.get()
     result_label.config(text=f"You entered: {user_input}")    # Telling user what they typed
 
+# User input but it does not appear on the window, only the terminal
+def city_user_input(self, text):
+    user_input = input()
+    self = user_input
+    text = user_input
+    return text
+
 # Our small window which text is going to be typed in
 entry_var = StringVar() # Managing value of label widget to have our text
 entry_widget = ttk.Entry(root, textvariable=entry_var, width=40)
@@ -93,14 +100,6 @@ style.configure(".", font=('Times New Roman', 20))    # Applies font and font si
 style.configure("Blue.TLabel", foreground ="blue")     # To add blue for labels
 style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
-
-
-# User input but it does not appear on the window, only the terminal
-def city_user_input(self, text):
-    user_input = input()
-    self = user_input
-    text = user_input
-    return text
 
 # Greeting user, also not on window
 print("Greetings!")
