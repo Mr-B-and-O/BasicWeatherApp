@@ -94,9 +94,21 @@ style.configure("Blue.TLabel", foreground ="blue")     # To add blue for labels
 style.configure("Red.TLabel", foreground ="red")    # To add red for labels
 style.configure("Purple.TLabel", foreground ="purple")    # To add purple for labels
 
-# Using the API key and the city name so the user can write what weather they want for the city
+
+# User input but it does not appear on the window, only the terminal
+def city_user_input(self, text):
+    user_input = input()
+    self = user_input
+    text = user_input
+    return text
+
+# Greeting user, also not on window
+print("Greetings!")
+print("Please type a city you want the weather for: ")
+
+# Using the API key and the city name
 API_KEY = "5d9f1926d563ad32d761e5ec29fcd47c"
-CITY_NAME = "Phuthaditjhaba"  # Example city. This will change that the user has to input it while the program is running then it will calculate everything after the input
+CITY_NAME = f"{city_user_input(0, 1)}"  # Example city. This will change that the user has to input it while the program is running then it will calculate everything after the input
 
 # Base URL for the Current Weather Data API
 BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
@@ -153,14 +165,15 @@ except KeyError as e:
     print(f"Error: Missing key in API response - {e}")
 
 # Creating the text and button
-greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting the user
+
+
+
+
+# Creating text for the weather
+greetings = ttk.Label(frm, text = "Greeting, please provide the city you're in ", style ="Blue.TLabel")    # Creates a label widget holding a static text string greeting
 greetings.pack()
 botton_1 = ttk.Button(frm, text = "Input text test", command=process_input)    # A button widget is created . When pressed, it types out the text which the user typed
 botton_1.pack(pady=10)
-result_label = Label(root, text="")    # The lebal for our process_input fucntion
-result_label.pack(pady=10)
-
-# Creating text for the weather
 weather_city_name_text = ttk.Label(frm, text = f"Weather in {CITY_NAME}:", style ="Blue.TLabel")    # Display weather city name
 weather_city_name_text.pack(pady=10)
 temperature_text = ttk.Label(frm, text = f"  Temperature: {current_temperature_celsius:.2f} C", style ="Red.TLabel")    # Display temperature
@@ -177,12 +190,15 @@ sunrise_time_text = ttk.Label(frm, text = f"  Sunrise time (Local): {sunrise_tim
 sunrise_time_text.pack(pady=10)
 sunset_time_text = ttk.Label(frm, text = f"  Sunset time (Local): {sunset_time}", style ="Purple.TLabel")    # Display sunset time
 sunset_time_text.pack(pady=10)
+result_label = Label(root, text= "")    # The lebal for our process_input fucntion
+result_label.pack(pady=10)
 
 # The exit button
 botton_2 = ttk.Button(frm, text = "Exit", command=root.destroy)    # A button widget is then created. When pressed, it will call the destroy() method on the root
 botton_2.pack(pady=10)
 
 # Keeps the program running
-root.mainloop()   # Method puts everything on the display, and responds to user input until the program terminates.
+   # Method puts everything on the display, and responds to user input until the program terminates.
+root.mainloop()
 
 # The program will loop
